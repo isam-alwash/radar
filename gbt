@@ -1,0 +1,49 @@
+#include <Servo.h>
+
+const int trigPin = 9;  // Trig pin of ultrasound sensor
+const int echoPin = 10; // Echo pin of ultrasound sensor
+Servo myServo;
+
+void setup() {
+  Serial.begin(9600);
+  myServo.attach(6);  // Servo control pin
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+}
+
+void loop() {
+  for (int angle = 0; angle <= 180; angle += 10) {
+    myServo.write(angle);
+    delay(500);
+    int distance = getDistance();
+    Serial.print("Angle: ");
+    Serial.print(angle);
+    Serial.print(" degrees, Distance: ");
+    Serial.print(distance);
+    Serial.println(" cm");
+  }
+
+  for (int angle = 180; angle >= 0; angle -= 10) {
+    myServo.write(angle);
+    delay(500);
+    int distance = getDistance();
+    Serial.print("Angle: ");
+    Serial.print(angle);
+    Serial.print(" degrees, Distance: ");
+    Serial.print(distance);
+    Serial.println(" cm");
+  }
+}
+
+int getDistance() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  int duration = pulseIn(echoPin, HIGH);
+  // Calculate distance in centimeters
+  int distance = duration * 0.034 / 2;
+  return distance;
+}
